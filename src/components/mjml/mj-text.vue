@@ -1,6 +1,6 @@
 <template>
   <div v-if="data">
-    <icon-handler @delete="$emit('delete')"></icon-handler>
+    <icon-handler @delete="$emit('delete')" @edit="editElement()"></icon-handler>
     <table width="600"
            class="main"
            cellspacing="0"
@@ -38,6 +38,11 @@ export default {
     return {
       text: 'Example text',
     };
+  },
+  methods: {
+    editElement() {
+
+    },
   },
 };
 </script>

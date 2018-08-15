@@ -1,12 +1,15 @@
 <template>
   <v-layout align-center justify-space-between row class="action-items">
     <div class="item">
-      <v-icon title="Move element" class="item  actions move md-icon material-icons">
+      <v-icon title="Move element" class="item actions move">
         drag_handle
+      </v-icon>
+      <v-icon title="Edit Element" class="item actions" @click="$emit('edit')">
+        edit
       </v-icon>
     </div>
     <div class="item">
-      <v-icon class="item actions delete md-icon material-icons" title="Delete element" @click="$emit('delete')">
+      <v-icon class="item actions delete" title="Delete element" @click="$emit('delete')">
         delete
       </v-icon>
     </div>
