@@ -2,7 +2,7 @@
   <v-content>
     <v-container fluid>
       <v-layout row wrap>
-        <v-flex xs6>
+        <v-flex lg1 xs4>
           <draggable
             v-model="myArray"
             :options="{forceFallback: true, group:{ name:'people',  pull:'clone', put:false }, sort: false}"
@@ -13,7 +13,7 @@
             <div v-for="element in myArray" :key="element.id">{{element.name}}</div>
           </draggable>
         </v-flex>
-        <v-flex xs6>
+        <v-flex lg6 xs8>
           <draggable
             v-model="myArray2"
             :options="{forceFallback: true, handle: 'i.actions.move', group:'people'}"
@@ -29,8 +29,14 @@
               :id="element.id"
               :is="element.type"
               :data="element.data"
-              @delete="myArray2.splice(index, 1)"/>
+              @delete="myArray2.splice(index, 1)"
+              @updateSettings="updateElementSettings(index, ...arguments)"
+              @updateContent="updateElementText(index, ...arguments)"/>
           </draggable>
+        </v-flex>
+        <v-flex lg5 xs12>
+          <iframe :srcdoc="html" width="100%" style="background-color: white; min-height: 500px;" height="100%">
+          </iframe>
         </v-flex>
       </v-layout>
     </v-container>
@@ -38,12 +44,11 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 import draggable from 'vuedraggable';
 import MjButton from '../components/mjml/mj-button';
-import MjColumn from '../components/mjml/mj-column';
 import MjText from '../components/mjml/mj-text';
-import MjHeader from '../components/mjml/mj-header';
-import MjSection from '../components/mjml/mj-section';
 import MjImage from '../components/mjml/mj-image';
 
 const uuidv4 = require('uuid/v4');
@@ -52,26 +57,21 @@ export default {
   name: 'Generator',
   components: {
     MjButton,
-    MjColumn,
-    MjHeader,
     MjText,
-    MjSection,
     MjImage,
     draggable,
   },
   data() {
     return {
       myArray: [
-        { name: 'text', id: '1', type: 'mj-text', data: {} },
-        { name: 'column', id: '2', type: 'mj-column', data: {} },
-        { name: 'image', id: '3', type: 'mj-image', data: {} },
-        { name: 'section', id: '4', type: 'mj-section', data: {} },
-        { name: 'header', id: '5', type: 'mj-header', data: {} },
-        { name: 'button', id: '6', type: 'mj-button', data: {} },
+        { name: 'text', id: '1', type: 'mj-text', data: '<p>Example Text</p>', settings: {} },
+        { name: 'image', id: '3', type: 'mj-image', data: '', settings: {} },
+        { name: 'button', id: '6', type: 'mj-button', data: 'Button', settings: {} },
       ],
       myArray2: [
       ],
       drag: false,
+      html: '',
     };
   },
   methods: {
@@ -82,6 +82,46 @@ export default {
       const newEl = JSON.parse(JSON.stringify(obj));
       newEl.id = uuidv4();
       return newEl;
+    },
+    updateElementSettings(index, settings) {
+      this.myArray2[index].settings = settings;
+      this.updateHtmlPreview();
+    },
+    updateElementText(index, data) {
+      this.myArray2[index].data = data;
+      this.updateHtmlPreview();
+    },
+    getMJML() {
+      let mjml = '';
+      this.myArray2.forEach((el) => {
+        let settings = '';
+        Object.keys(el.settings).forEach((key) => {
+          settings += `${key}='${el.settings[key]}' `;
+        });
+        mjml += `<${el.type} ${settings}>${el.data}</${el.type}>`;
+      });
+      return `<mjml><mj-body><mj-section><mj-column>${mjml}</mj-column></mj-section></mj-body></mjml>`;
+    },
+    updateHtmlPreview() {
+      const mjml = this.getMJML();
+      axios.post(
+        'https://api.mjml.io/v1/render',
+        { mjml },
+        {
+          headers: {
+            // eslint-disable-next-line max-len
+            Authorization: 'Basic MTdiYTc3MDEtYzFhYS00OGJhLTg0MDctNDQzNTA1YWU1ZDQzOjk2MWQxMWUwLTlkZGMtNDdlZC05NWM2LTgyNTk1MWU2MGQxNA==',
+            'Content-Type': 'application/json',
+          },
+        },
+      ).then((res) => {
+        this.html = res.data.html;
+      });
+    },
+  },
+  watch: {
+    myArray2() {
+      this.updateHtmlPreview();
     },
   },
 };

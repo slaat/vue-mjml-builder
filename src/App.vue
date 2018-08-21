@@ -14,4 +14,11 @@ export default {
   .element:hover>i.actions {
     opacity: 1;
   }
+
+  .reset-this-parent {
+    all: initial;
+    * {
+      all: unset;
+    }
+  }
 </style>
