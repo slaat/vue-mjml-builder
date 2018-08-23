@@ -1,59 +1,65 @@
 <template>
   <div v-if="data">
     <icon-handler @delete="$emit('delete')" @edit="editElement()"></icon-handler>
-    <table
-      class="reset-this-parent"
-      align="center"
-      border="0"
-      cellpadding="0"
-      cellspacing="0"
-      role="presentation"
-      style="background-color: white;border-collapse:separate;line-height:100%;">
+    <table width="100%" style="background-color: white;">
       <tr>
-        <td
-          align="center"
-          bgcolor="#414141"
-          role="presentation"
-          style="border:none;border-radius:3px;color:#ffffff;cursor:auto;padding:10px 25px;"
-          valign="middle">
-          <p
-            style="background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;
-            font-weight:normal;line-height:120%;Margin:0;text-decoration:none;text-transform:none;">
-            Don't click me!
-          </p>
+        <td align="center">
+          <table
+            role="presentation"
+            cellpadding="0"
+            cellspacing="0"
+            style="border-collapse:separate;"
+            align="center"
+            border="0">
+            <tr>
+              <td style="border:none;border-radius:3px;color:#ffffff;cursor:auto;padding:10px 25px;"
+                  align="center"
+                  valign="middle"
+                  :bgcolor="settings['background-color']">
+                <p
+                  :style="settings"
+                  style="text-decoration:none;font-family:Ubuntu, Helvetica, Arial, sans-serif;
+                  font-size:13px;font-weight:normal;line-height:120%;text-transform:none;margin:0px;">
+                  {{text}}
+                </p>
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
     </table>
-    <!--<table width="600"-->
-           <!--class="main"-->
-           <!--cellspacing="0"-->
-           <!--cellpadding="0"-->
-           <!--border="0"-->
-           <!--style="display: table; background-color: white;"-->
-           <!--align="center"-->
-           <!--data-type="text-block">-->
-      <!--<tbody>-->
-      <!--<tr>-->
-        <!--<td class="block-text" data-block-id="background" align="left"-->
-            <!--style="font-size: 13px; color: #000000;"-->
-            <!--:style="settings">-->
-          <!--<tinymce-->
-            <!--:id="id"-->
-            <!--v-model="text"-->
-            <!--:value="text"-->
-            <!--:inline="true"/>-->
-        <!--</td>-->
-      <!--</tr>-->
-      <!--</tbody>-->
-    <!--</table>-->
     <v-dialog v-model="dialog" persistent max-width="500px">
       <v-card>
         <v-card-title>
-          <span class="headline">User Profile</span>
+          <span class="headline">Element Settings</span>
         </v-card-title>
         <v-card-text>
           <v-container grid-list-md>
             <v-layout wrap>
+              <v-flex xs12>
+                <v-text-field
+                  label="Text"
+                  required
+                  v-model="text"></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-text-field
+                  label="Href"
+                  required
+                  v-model="settings['href']"></v-text-field>
+              </v-flex>
+              <v-flex xs6>
+                <v-text-field
+                  label="Background Color"
+                  required
+                  v-model="settings['background-color']"></v-text-field>
+              </v-flex>
+              <v-flex xs6>
+                <v-text-field
+                  label="Text Color"
+                  required
+                  v-model="settings['color']"></v-text-field>
+              </v-flex>
               <v-flex xs12>
                 <v-text-field
                   label="Padding Top"
@@ -102,11 +108,15 @@ export default {
   data() {
     return {
       dialog: false,
+      text: '',
       settings: {
         'padding-top': '0px',
         'padding-bottom': '0px',
         'padding-left': '0px',
         'padding-right': '0px',
+        'background-color': '#414141',
+        href: '',
+        color: '#ffffff',
       },
     };
   },
@@ -119,6 +129,12 @@ export default {
     dialog() {
       this.$emit('updateSettings', this.settings);
     },
+    text() {
+      this.$emit('updateContent', this.text);
+    },
+  },
+  created() {
+    this.text = this.data;
   },
 };
 </script>

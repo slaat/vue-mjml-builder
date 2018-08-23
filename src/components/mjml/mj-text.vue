@@ -26,7 +26,7 @@
     <v-dialog v-model="dialog" persistent max-width="500px">
       <v-card>
         <v-card-title>
-          <span class="headline">User Profile</span>
+          <span class="headline">Element Settings</span>
         </v-card-title>
         <v-card-text>
           <v-container grid-list-md>

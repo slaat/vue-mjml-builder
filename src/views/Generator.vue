@@ -3,6 +3,7 @@
     <v-container fluid>
       <v-layout row wrap>
         <v-flex lg1 xs4>
+          <h2>Elements</h2>
           <draggable
             v-model="myArray"
             :options="{forceFallback: true, group:{ name:'people',  pull:'clone', put:false }, sort: false}"
@@ -14,13 +15,14 @@
           </draggable>
         </v-flex>
         <v-flex lg6 xs8>
+          <h2>Builder</h2>
           <draggable
             v-model="myArray2"
             :options="{forceFallback: true, handle: 'i.actions.move', group:'people'}"
             @start="drag=true"
             @end="drag=false"
             class="dragArea editor-area elevation-2"
-            data-empty-template="Ziehe Elemente hier hinein"
+            data-empty-template="Drag Elements from the Elements Bar into this area"
             :class="{empty: !myArray2.length}"
           >
             <component
@@ -35,6 +37,7 @@
           </draggable>
         </v-flex>
         <v-flex lg5 xs12>
+          <h2>Preview</h2>
           <iframe :srcdoc="html" width="100%" style="background-color: white; min-height: 500px;" height="100%">
           </iframe>
         </v-flex>
@@ -65,7 +68,7 @@ export default {
     return {
       myArray: [
         { name: 'text', id: '1', type: 'mj-text', data: '<p>Example Text</p>', settings: {} },
-        { name: 'image', id: '3', type: 'mj-image', data: '', settings: {} },
+        { name: 'image', id: '3', type: 'mj-image', data: ' ', settings: {} },
         { name: 'button', id: '6', type: 'mj-button', data: 'Button', settings: {} },
       ],
       myArray2: [
