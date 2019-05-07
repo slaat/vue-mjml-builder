@@ -21,7 +21,7 @@
         </td>
       </tr>
     </table>
-    <v-dialog v-model="dialog" persistent max-width="500px">
+    <v-dialog v-model="dialog" persistent max-width="700px" scrollable>
       <v-card>
         <v-card-title>
           <span class="headline">Element Settings</span>
@@ -29,8 +29,8 @@
         <v-card-text>
           <v-container grid-list-md>
             <v-layout wrap>
-              <v-flex xs12>
-                <image-selector v-model="image" :width="200" @input="uploadImage"/>
+              <v-flex xs12 sm6 offset-sm3>
+                <image-selector v-model="image" :url="settings.src" @input="uploadImage"/>
               </v-flex>
               <v-flex xs6>
                 <v-text-field
@@ -119,8 +119,7 @@
 
     private async uploadImage() {
       // TODO: check image types
-      console.log(this.image.type);
-      const url = `${Date.now() + Math.floor(Math.random() * Math.floor(50000))}`;
+      const url = this.id + '_' + Math.random().toString(36).substr(2, 3) + '.' + this.image.name.split('.').pop();
       await Storage.put(url, this.image, {level: 'public', contentType: this.image.type});
       this.settings.src = `https://images.vue-mjml-builder.ga/${url}`;
     }

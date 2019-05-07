@@ -1,45 +1,54 @@
 <template>
   <v-content>
-    <v-container fluid>
+    <v-container fluid class="fill-height">
       <v-layout row wrap>
         <v-flex lg1 xs4>
           <h2>Elements</h2>
           <draggable
-            v-model="myArray"
+            v-model="elements"
             :options="{forceFallback: true, group:{ name:'people',  pull:'clone', put:false }, sort: false}"
             @start="drag=true"
             @end="drag=false"
             :clone="insertComponent"
           >
-            <div v-for="element in myArray" :key="element.id">{{element.name}}</div>
+            <div v-for="element in elements" :key="element.id" class="mjml-element">{{element.name}}</div>
           </draggable>
         </v-flex>
         <v-flex lg6 xs8>
           <h2>Builder</h2>
           <draggable
-            v-model="myArray2"
+            v-model="activeElements"
             :options="{forceFallback: true, handle: 'i.actions.move', group:'people'}"
             @start="drag=true"
             @end="drag=false"
             class="dragArea editor-area elevation-2"
             data-empty-template="Drag Elements from the Elements Bar into this area"
-            :class="{empty: !myArray2.length}"
+            :class="{empty: !activeElements.length}"
           >
             <component
-              v-for="(element, index) in myArray2"
+              v-for="(element, index) in activeElements"
               :key="element.id"
               :id="element.id"
               :is="element.type"
               :data="element.data"
-              @delete="myArray2.splice(index, 1)"
+              @delete="activeElements.splice(index, 1)"
               @updateSettings="updateElementSettings(index, ...arguments)"
               @updateContent="updateElementText(index, ...arguments)"/>
           </draggable>
         </v-flex>
         <v-flex lg5 xs12>
           <h2>Preview</h2>
-          <iframe :srcdoc="html" width="100%" style="background-color: white; min-height: 500px;" height="100%">
-          </iframe>
+          <v-tabs v-model="activeTab">
+            <v-tab :key="1">Preview</v-tab>
+            <v-tab :key="2">HTML</v-tab>
+            <v-tab-item :key="1">
+              <iframe :srcdoc="html" width="100%" style="background-color: white; min-height: 500px;" height="100%">
+              </iframe>
+            </v-tab-item>
+            <v-tab-item :key="2" class="fill-height">
+              <textarea style="height: 500px; width: 100%" disabled>{{html}}</textarea>
+            </v-tab-item>
+          </v-tabs>
         </v-flex>
       </v-layout>
     </v-container>
@@ -64,40 +73,41 @@
     },
   })
   export default class Generator extends Vue {
-    private myArray: any = [
+    private elements: any = [
       {name: 'text', id: '1', type: 'mj-text', data: '<p>Example Text</p>', settings: {}},
       {name: 'image', id: '3', type: 'mj-image', data: ' ', settings: {}},
       {name: 'button', id: '6', type: 'mj-button', data: 'Button', settings: {}},
     ];
 
-    private myArray2: any = [];
+    private activeElements: any = [];
     private drag: boolean = false;
     private html: string = '';
+    private activeTab: number = 0;
 
     private insertComponent(obj) {
       const newEl = JSON.parse(JSON.stringify(obj));
-      newEl.id = Date.now() + '';
+      newEl.id = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
       return newEl;
     }
 
 
     private deleteElement(index) {
-      this.myArray2.splice(index, 1);
+      this.activeElements.splice(index, 1);
     }
 
     private updateElementSettings(index, settings) {
-      this.myArray2[index].settings = settings;
+      this.activeElements[index].settings = settings;
       this.updateHtmlPreview();
     }
 
     private updateElementText(index, data) {
-      this.myArray2[index].data = data;
+      this.activeElements[index].data = data;
       this.updateHtmlPreview();
     }
 
     private getMJML() {
       let mjml = '';
-      this.myArray2.forEach((el) => {
+      this.activeElements.forEach((el) => {
         let settings = '';
         Object.keys(el.settings).forEach((key) => {
           settings += `${key}='${el.settings[key]}' `;
@@ -125,7 +135,7 @@
       });
     }
 
-    @Watch('myArray2')
+    @Watch('activeElements')
     private arrayUpdated() {
       this.updateHtmlPreview();
     }
@@ -223,7 +233,6 @@
     opacity: 1;
   }
 
-
   .columns {
     display: flex;
     flex: 1;
@@ -251,5 +260,9 @@
     order: 3;
     z-index: 2;
     padding: 15px;
+  }
+
+  .mjml-element {
+    cursor: pointer;
   }
 </style>

@@ -56,18 +56,14 @@
 
     private created() {
       if (this.url) {
-        this.init(this.url);
+        this.image = this.url;
       }
-    }
-
-    private async init(itemKey) {
-      this.image = await Storage.get(itemKey, {level: 'public'});
     }
 
     @Watch('url')
     private updatedUrl() {
       if (this.url) {
-        this.init(this.url);
+        this.image = this.url;
       }
     }
 
