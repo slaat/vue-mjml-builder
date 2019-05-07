@@ -67,41 +67,41 @@
   </div>
 </template>
 
-<script>
-import iconHandler from './icon-handler';
+<script lang="ts">
+  import {Component, Vue, Watch, Prop} from 'vue-property-decorator';
+  import iconHandler from './icon-handler.vue';
 
-export default {
-  name: 'mj-text',
-  components: {
-    iconHandler,
-  },
-  props: ['data', 'id'],
-  data() {
-    return {
-      text: 'Example text',
-      dialog: false,
-      settings: {
-        'padding-top': '10px',
-        'padding-bottom': '10px',
-        'padding-left': '25px',
-        'padding-right': '25px',
-      },
+  @Component({
+    components: {
+      iconHandler,
+    },
+  })
+  export default class MjText extends Vue {
+    @Prop({type: String, default: ''}) private data!: any;
+    @Prop({type: String, default: ''}) private id!: any;
+
+    private text: string = 'Example text';
+    private dialog: boolean = false;
+    private settings: any = {
+      'padding-top': '10px',
+      'padding-bottom': '10px',
+      'padding-left': '25px',
+      'padding-right': '25px',
     };
-  },
-  methods: {
-    editElement() {
+
+    private editElement() {
       this.dialog = true;
-    },
-  },
-  watch: {
-    dialog() {
+    }
+
+    @Watch('dialog')
+    private updatedDialog() {
       this.$emit('updateSettings', this.settings);
-    },
-    text() {
+    }
+    @Watch('text')
+    private updatedText() {
       this.$emit('updateContent', this.text);
-    },
-  },
-};
+    }
+  }
 </script>
 
 <style scoped>

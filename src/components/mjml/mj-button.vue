@@ -96,47 +96,48 @@
   </div>
 </template>
 
-<script>
-import iconHandler from './icon-handler';
+<script lang="ts">
+  import {Component, Vue, Watch, Prop} from 'vue-property-decorator';
+  import iconHandler from './icon-handler.vue';
 
-export default {
-  name: 'mj-button',
-  components: {
-    iconHandler,
-  },
-  props: ['data', 'id'],
-  data() {
-    return {
-      dialog: false,
-      text: '',
-      settings: {
-        'padding-top': '0px',
-        'padding-bottom': '0px',
-        'padding-left': '0px',
-        'padding-right': '0px',
-        'background-color': '#414141',
-        href: '',
-        color: '#ffffff',
-      },
+  @Component({
+    components: {
+      iconHandler,
+    },
+  })
+  export default class MjButton extends Vue {
+    @Prop({type: String, default: ''}) private data!: any;
+    @Prop({type: String, default: ''}) private id!: any;
+
+    private text: string = 'Example text';
+    private dialog: boolean = false;
+    private settings: any = {
+      'padding-top': '0px',
+      'padding-bottom': '0px',
+      'padding-left': '0px',
+      'padding-right': '0px',
+      'background-color': '#414141',
+      'href': '',
+      'color': '#ffffff',
     };
-  },
-  methods: {
-    editElement() {
+
+    private editElement() {
       this.dialog = true;
-    },
-  },
-  watch: {
-    dialog() {
+    }
+
+    private created() {
+      this.text = this.data;
+    }
+
+    @Watch('dialog')
+    private updatedDialog() {
       this.$emit('updateSettings', this.settings);
-    },
-    text() {
+    }
+    @Watch('text')
+    private updatedText() {
       this.$emit('updateContent', this.text);
-    },
-  },
-  created() {
-    this.text = this.data;
-  },
-};
+    }
+  }
 </script>
 
 <style scoped>

@@ -29,6 +29,9 @@
         <v-card-text>
           <v-container grid-list-md>
             <v-layout wrap>
+              <v-flex xs12>
+                <image-selector v-model="image" :width="200" @input="uploadImage"/>
+              </v-flex>
               <v-flex xs6>
                 <v-text-field
                   label="Width"
@@ -77,42 +80,51 @@
   </div>
 </template>
 
-<script>
-import iconHandler from './icon-handler';
+<script lang="ts">
+  import {Component, Vue, Watch, Prop} from 'vue-property-decorator';
+  import {Storage} from 'aws-amplify';
+  import iconHandler from './icon-handler.vue';
+  import ImageSelector from '@/components/ImageSelector.vue';
 
-export default {
-  name: 'mj-image',
-  components: {
-    iconHandler,
-  },
-  props: ['data', 'id'],
-  data() {
-    return {
-      dialog: false,
-      text: '',
-      settings: {
-        'padding-top': '0px',
-        'padding-bottom': '0px',
-        'padding-left': '0px',
-        'padding-right': '0px',
-        width: '',
-        src: '',
-      },
+  @Component({
+    components: {
+      ImageSelector,
+      iconHandler,
+    },
+  })
+  export default class MjImage extends Vue {
+    @Prop({type: String, default: ''}) private data!: any;
+    @Prop({type: String, default: ''}) private id!: any;
+
+    private image: any = null;
+    private text: string = '';
+    private dialog: boolean = false;
+    private settings: any = {
+      'padding-top': '0px',
+      'padding-bottom': '0px',
+      'padding-left': '0px',
+      'padding-right': '0px',
+      'width': '',
+      'src': '',
     };
-  },
-  methods: {
-    editElement() {
+
+    private editElement() {
       this.dialog = true;
-    },
-  },
-  watch: {
-    dialog() {
+    }
+
+    @Watch('dialog')
+    private updatedDialog() {
       this.$emit('updateSettings', this.settings);
-    },
-  },
-  created() {
-  },
-};
+    }
+
+    private async uploadImage() {
+      // TODO: check image types
+      console.log(this.image.type);
+      const url = `${Date.now() + Math.floor(Math.random() * Math.floor(50000))}`;
+      await Storage.put(url, this.image, {level: 'public', contentType: this.image.type});
+      this.settings.src = `https://images.vue-mjml-builder.ga/${url}`;
+    }
+  }
 </script>
 
 <style scoped>

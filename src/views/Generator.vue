@@ -46,55 +46,56 @@
   </v-content>
 </template>
 
-<script>
-import axios from 'axios';
+<script lang="ts">
+  import {Component, Vue, Watch} from 'vue-property-decorator';
+  import axios from 'axios';
 
-import draggable from 'vuedraggable';
-import MjButton from '../components/mjml/mj-button';
-import MjText from '../components/mjml/mj-text';
-import MjImage from '../components/mjml/mj-image';
+  import draggable from 'vuedraggable';
+  import MjButton from '@/components/mjml/mj-button.vue';
+  import MjText from '@/components/mjml/mj-text.vue';
+  import MjImage from '@/components/mjml/mj-image.vue';
 
-const uuidv4 = require('uuid/v4');
-
-export default {
-  name: 'Generator',
-  components: {
-    MjButton,
-    MjText,
-    MjImage,
-    draggable,
-  },
-  data() {
-    return {
-      myArray: [
-        { name: 'text', id: '1', type: 'mj-text', data: '<p>Example Text</p>', settings: {} },
-        { name: 'image', id: '3', type: 'mj-image', data: ' ', settings: {} },
-        { name: 'button', id: '6', type: 'mj-button', data: 'Button', settings: {} },
-      ],
-      myArray2: [
-      ],
-      drag: false,
-      html: '',
-    };
-  },
-  methods: {
-    deleteElement(index) {
-      this.myArray2.splice(index, 1);
+  @Component({
+    components: {
+      MjButton,
+      MjText,
+      MjImage,
+      draggable,
     },
-    insertComponent(obj) {
+  })
+  export default class Generator extends Vue {
+    private myArray: any = [
+      {name: 'text', id: '1', type: 'mj-text', data: '<p>Example Text</p>', settings: {}},
+      {name: 'image', id: '3', type: 'mj-image', data: ' ', settings: {}},
+      {name: 'button', id: '6', type: 'mj-button', data: 'Button', settings: {}},
+    ];
+
+    private myArray2: any = [];
+    private drag: boolean = false;
+    private html: string = '';
+
+    private insertComponent(obj) {
       const newEl = JSON.parse(JSON.stringify(obj));
-      newEl.id = uuidv4();
+      newEl.id = Date.now() + '';
       return newEl;
-    },
-    updateElementSettings(index, settings) {
+    }
+
+
+    private deleteElement(index) {
+      this.myArray2.splice(index, 1);
+    }
+
+    private updateElementSettings(index, settings) {
       this.myArray2[index].settings = settings;
       this.updateHtmlPreview();
-    },
-    updateElementText(index, data) {
+    }
+
+    private updateElementText(index, data) {
       this.myArray2[index].data = data;
       this.updateHtmlPreview();
-    },
-    getMJML() {
+    }
+
+    private getMJML() {
       let mjml = '';
       this.myArray2.forEach((el) => {
         let settings = '';
@@ -104,30 +105,31 @@ export default {
         mjml += `<${el.type} ${settings}>${el.data}</${el.type}>`;
       });
       return `<mjml><mj-body><mj-section><mj-column>${mjml}</mj-column></mj-section></mj-body></mjml>`;
-    },
-    updateHtmlPreview() {
+    }
+
+    private updateHtmlPreview() {
       const mjml = this.getMJML();
       axios.post(
         'https://api.mjml.io/v1/render',
-        { mjml },
+        {mjml},
         {
           headers: {
             // eslint-disable-next-line max-len
-            Authorization: 'Basic MTdiYTc3MDEtYzFhYS00OGJhLTg0MDctNDQzNTA1YWU1ZDQzOjk2MWQxMWUwLTlkZGMtNDdlZC05NWM2LTgyNTk1MWU2MGQxNA==',
+            'Authorization': 'Basic MTdiYTc3MDEtYzFhYS00OGJhLTg0MDctNDQzNTA1YWU1ZDQzOjk2MWQxMWUwLTlkZGMtNDdlZC05NWM2' +
+              'LTgyNTk1MWU2MGQxNA==',
             'Content-Type': 'application/json',
           },
         },
       ).then((res) => {
         this.html = res.data.html;
       });
-    },
-  },
-  watch: {
-    myArray2() {
+    }
+
+    @Watch('myArray2')
+    private arrayUpdated() {
       this.updateHtmlPreview();
-    },
-  },
-};
+    }
+  }
 </script>
 
 <style scoped>
@@ -167,23 +169,26 @@ export default {
     box-shadow: 0 0 10px #ccc;
     z-index: 1;
   }
+
   .editor-area .element {
     position: relative;
-    -webkit-transition: box-shadow,transform .1s ease-in-out;
-    -moz-transition: box-shadow,transform .1s ease-in-out;
-    -o-transition: box-shadow,transform .1s ease-in-out;
-    transition: box-shadow,transform .1s ease-in-out;
+    -webkit-transition: box-shadow, transform .1s ease-in-out;
+    -moz-transition: box-shadow, transform .1s ease-in-out;
+    -o-transition: box-shadow, transform .1s ease-in-out;
+    transition: box-shadow, transform .1s ease-in-out;
   }
 
-  .element>i.actions.delete {
+  .element > i.actions.delete {
     top: 0;
     right: 0;
   }
-  .element>i.actions.move {
+
+  .element > i.actions.move {
     top: 0;
     left: 0;
   }
-  .element>i.actions {
+
+  .element > i.actions {
     background-color: #d8d8d8;
     position: absolute;
     opacity: 0;
@@ -193,48 +198,54 @@ export default {
     -o-transition: all .2s ease-in-out;
     transition: all .2s ease-in-out;
   }
+
   .element {
     -webkit-transition: all .2s ease-in-out;
     -moz-transition: all .2s ease-in-out;
     -o-transition: all .2s ease-in-out;
     transition: all .2s ease-in-out;
   }
+
   .md-icon {
     font-size: 24px;
-    line-height: 32px!important;
-    height: 32px!important;
+    line-height: 32px !important;
+    height: 32px !important;
     color: #727272;
     border-radius: 50%;
     cursor: pointer;
-    transition: background 280ms ease-out,color 280ms ease-out;
-    width: 32px!important;
+    transition: background 280ms ease-out, color 280ms ease-out;
+    width: 32px !important;
     text-align: center;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   }
-  .element:hover>i.actions {
+
+  .element:hover > i.actions {
     opacity: 1;
   }
 
 
   .columns {
     display: flex;
-    flex:1;
+    flex: 1;
     overflow: auto;
     padding: 5px;
   }
+
   .main {
     flex: 1;
     order: 2;
     min-width: 600px;
-    align-items: start;
+    align-items: flex-start;
     display: flex;
     justify-content: center;
   }
+
   .sidebar-first {
     width: 66px;
     order: 1;
     z-index: 2;
   }
+
   .sidebar-second {
     min-width: 300px;
     order: 3;

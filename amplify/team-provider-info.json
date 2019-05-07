@@ -1,0 +1,19 @@
+{
+    "master": {
+        "awscloudformation": {
+            "AuthRoleName": "vue-mjml-builder-20190507005035-authRole",
+            "UnauthRoleArn": "arn:aws:iam::541215263852:role/vue-mjml-builder-20190507005035-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::541215263852:role/vue-mjml-builder-20190507005035-authRole",
+            "Region": "eu-west-1",
+            "DeploymentBucketName": "vue-mjml-builder-20190507005035-deployment",
+            "UnauthRoleName": "vue-mjml-builder-20190507005035-unauthRole",
+            "StackName": "vue-mjml-builder-20190507005035",
+            "StackId": "arn:aws:cloudformation:eu-west-1:541215263852:stack/vue-mjml-builder-20190507005035/5c3cc860-7051-11e9-8856-0ad4f59fbce2"
+        },
+        "categories": {
+            "auth": {
+                "cognitoea7bcfbf": {}
+            }
+        }
+    }
+}

@@ -3,11 +3,14 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'attribute-editor',
-  props: ['data', 'open'],
-};
+<script lang="ts">
+  import {Component, Vue, Prop} from 'vue-property-decorator';
+
+  @Component
+  export default class AttributeEditor extends Vue {
+    @Prop({type: String, default: ''}) private data!: any;
+    @Prop({type: String, default: ''}) private open!: any;
+  }
 </script>
 
 <style scoped>

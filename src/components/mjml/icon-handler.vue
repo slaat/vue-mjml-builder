@@ -16,10 +16,12 @@
   </v-layout>
 </template>
 
-<script>
-export default {
-  name: 'icon-handler',
-};
+<script lang="ts">
+  import {Component, Vue} from 'vue-property-decorator';
+
+  @Component
+  export default class IconHandler extends Vue {
+  }
 </script>
 
 <style scoped>
