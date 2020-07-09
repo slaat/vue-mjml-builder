@@ -8,7 +8,4 @@ I know that this project is far from finished, unpolished etc. This could also b
 
 My goal is to being able to use it as a plugin at some point.
 
-## Live Demo
-
-[https://www.vue-mjml-builder.ga/](https://www.vue-mjml-builder.ga/)
 
