@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "aws-amplify": "^1.1.27",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "core-js": "^2.6.5",
     "material-design-icons-iconfont": "^3.0.3",
     "roboto-fontface": "*",
